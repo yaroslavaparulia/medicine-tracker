@@ -1,32 +1,84 @@
-# IDE & Editors
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+ 
+# IDE
+*.iml
+*.ipr
+*.iws
 .idea/
 .vscode/
-*.swp
-*.swo
-*.DS_Store
-
-# Operating System
-Thumbs.db
-ehthumbs.db
-
-# Build Outputs & Dependencies
-node_modules/
-build/
-dist/
-target/
-*.class
-*.jar
-
-# Environment & Credentials
-.env
-.env.local
-*.log
-
-# Mobile / Dart / Flutter (якщо використовується)
+ 
+# Flutter / Dart / Pub
 .dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
 .packages
 .pub-cache/
 .pub/
-
-# Documentation temporary files
-docs/*.tmp
+/build/
+/coverage/
+pubspec.lock
+ 
+# Symbolication / obfuscation
+app.*.symbols
+app.*.map.json
+ 
+# Android
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/key.properties
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+*.jks
+*.keystore
+ 
+# iOS / macOS
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbxuser
+**/ios/**/*.perspectivev3
+**/ios/**/*sync/
+**/ios/**/.sconsign.dblite
+**/ios/**/.tags*
+**/ios/**/.vagrant/
+**/ios/**/DerivedData/
+**/ios/**/Icon?
+**/ios/**/Pods/
+**/ios/**/.symlinks/
+**/ios/**/profile
+**/ios/**/xcuserdata
+**/ios/.generated/
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/ephemeral
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+ 
+# Секрети та конфігурація Firebase (якщо використовуватимете)
+.env
+.env.*
+!.env.example
+google-services.json
+GoogleService-Info.plist
