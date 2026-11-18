@@ -1,0 +1,60 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+
+actor "Літня людина" as Patient
+actor "Родич / опікун" as Caregiver
+actor "Лікар" as Doctor
+actor "Firebase\n(FCM, Cloud Functions)" as Firebase
+
+rectangle "Medicine Tracker" {
+  rectangle "Сценарії літньої людини" {
+    usecase "Керувати ліками\nта розкладом" as UC2
+    usecase "Отримати нагадування\nі відмітити прийом" as UC3
+    usecase "Вести запис\nсамопочуття" as UC4
+    usecase "Керувати доступом\nродичів" as UC5
+  }
+  rectangle "Сценарії родича" {
+    usecase "Підключитися до\nблизької людини" as UC6
+    usecase "Переглянути статус\nприйомів" as UC7
+    usecase "Отримати сповіщення\nпро пропуск" as UC9
+  }
+  rectangle "Спільні сценарії" {
+    usecase "Зареєструватися\nта увійти" as UC1
+    usecase "Сформувати\nPDF-звіт" as UC10
+    usecase "Керувати профілем\nі налаштуваннями" as UC11
+  }
+  rectangle "Системні сценарії" {
+    usecase "Виявити пропущений\nприйом" as UC8
+    usecase "Синхронізувати\nдані" as UC12
+  }
+}
+
+Patient -- UC2
+Patient -- UC3
+Patient -- UC4
+Patient -- UC5
+Patient -- UC10
+Patient -- UC11
+Caregiver -- UC6
+Caregiver -- UC7
+Caregiver -- UC9
+Caregiver -- UC11
+UC10 -- Doctor
+UC8 -- Firebase
+UC12 -- Firebase
+
+UC2 .> UC1 : <<include>>
+UC5 .> UC1 : <<include>>
+UC6 .> UC1 : <<include>>
+UC10 .> UC1 : <<include>>
+UC9 .> UC8 : <<include>>
+UC12 .> UC3 : <<extend>>
+
+note right of UC1
+  Автентифікація потрібна всім сценаріям.
+  Виконують: літня людина та родич / опікун
+end note
+@enduml
