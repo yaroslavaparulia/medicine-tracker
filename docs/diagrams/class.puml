@@ -1,0 +1,119 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+hide empty members
+
+abstract class User {
+  -id: String
+  -email: String
+  -displayName: String
+  #createdAt: DateTime
+  --
+  +register(email: String, password: String)
+  +login(email: String, password: String): bool
+  +logout()
+  +deleteAccount()
+}
+
+class Patient {
+  -fontScale: double
+  --
+  +addMedication(m: Medication)
+  +markDose(e: DoseEvent)
+  +inviteCaregiver(): CareLink
+  +logMood(level: int, note: String)
+}
+
+class Caregiver {
+  -fcmToken: String
+  --
+  +joinByCode(code: String): CareLink
+  +viewTodayStatus(): List<DoseEvent>
+  +receiveAlert(n: Notification)
+}
+
+class Medication {
+  -id: String
+  -name: String
+  -dosage: String
+  -form: String
+  -note: String
+  -daysOfWeek: List<int>
+  -times: List<Time>
+  -active: bool
+  --
+  +updateSchedule(days: List<int>, times: List<Time>)
+  +pause()
+  +generateDoseEvents(day: Date): List<DoseEvent>
+}
+
+class DoseEvent {
+  -id: String
+  -scheduledAt: DateTime
+  -takenAt: DateTime
+  -status: DoseStatus
+  --
+  +markTaken(at: DateTime)
+  +skip()
+  +markMissed()
+}
+
+class MoodEntry {
+  -id: String
+  -date: Date
+  -level: int
+  -note: String
+  --
+  +update(level: int, note: String)
+}
+
+class CareLink {
+  -id: String
+  -inviteCode: String
+  -expiresAt: DateTime
+  -status: LinkStatus
+  -canEditSchedule: bool
+  --
+  +activate(c: Caregiver)
+  +revoke()
+  +isExpired(): bool
+}
+
+class Notification {
+  -id: String
+  -title: String
+  -body: String
+  -sentAt: DateTime
+  -readAt: DateTime
+  --
+  +send()
+  +markRead()
+}
+
+enum DoseStatus {
+  PENDING
+  TAKEN
+  MISSED
+  SKIPPED
+}
+
+enum LinkStatus {
+  INVITED
+  ACTIVE
+  REVOKED
+}
+
+User <|-- Patient
+User <|-- Caregiver
+Patient "1" *-- "0..*" Medication : має
+Patient "1" *-- "0..*" MoodEntry : веде
+Medication "1" *-- "0..*" DoseEvent : планує
+Patient "1" -- "0..*" CareLink : надає доступ
+Caregiver "1" -- "0..1" CareLink : підключений через
+Caregiver "1" o-- "0..*" Notification : отримує
+Notification "0..*" -- "1" DoseEvent : про прийом
+DoseEvent ..> DoseStatus
+CareLink ..> LinkStatus
+
+@enduml
