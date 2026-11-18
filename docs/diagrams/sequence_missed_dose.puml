@@ -1,0 +1,45 @@
+@startuml
+title Пропущений прийом: перевірка та сповіщення родича
+autonumber
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+
+actor "Літня людина" as Patient
+participant "Застосунок\nлітньої людини" as PApp
+database "Firestore" as DB
+participant "Cloud Function\n(перевірка пропусків)" as Checker
+participant "FCM\n(push-сервіс)" as FCM
+participant "Застосунок\nродича" as CApp
+actor "Родич / опікун" as Caregiver
+
+PApp ->> Patient : Показати нагадування про прийом
+alt Прийом відмічено до порога (60 хв)
+Patient -> PApp : Натиснути «Прийнято»
+activate PApp
+PApp -> DB : Оновити DoseEvent: status = TAKEN
+DB --> PApp : Підтвердження (офлайн — у локальну чергу)
+PApp --> Patient : Припинити повтори, показати «Прийнято»
+deactivate PApp
+else Прийом не відмічено протягом 60 хв
+Checker -> Checker : Запуск за розкладом (щохвилини)
+activate Checker
+Checker -> DB : Знайти прострочені DoseEvent (PENDING)
+DB --> Checker : Список прийомів
+Checker -> DB : Оновити DoseEvent: status = MISSED
+Checker -> DB : Отримати активні CareLink і токени родичів
+DB --> Checker : Токени FCM
+Checker ->> FCM : Надіслати push (препарат, час)
+alt Токен дійсний
+FCM ->> CApp : Push-сповіщення про пропуск
+CApp ->> Caregiver : Показати сповіщення
+Caregiver -> CApp : Відкрити сповіщення
+CApp -> DB : Запит статусу прийому
+DB --> CApp : DoseEvent (status = MISSED)
+CApp --> Caregiver : Показати екран статусу
+else Токен недійсний
+FCM --> Checker : Помилка: токен недійсний
+Checker -> DB : Видалити застарілий токен
+end
+deactivate Checker
+end
+@enduml
